@@ -121,7 +121,7 @@
       </div>
     </div>
 
-    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.03</div>
+    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.04</div>
   </div>
 </template>
 
@@ -215,10 +215,20 @@ const initializeVoices = () => {
     return 0
   })
 
-  availableVoices.value = sorted
-  if (sorted.length > 0) {
+  // 只當語音有更新時才更新
+  if (sorted.length > 0 && availableVoices.value.length === 0) {
+    availableVoices.value = sorted
     selectedVoiceName.value = sorted[0].name
+    console.log(`Voices initialized: ${sorted.length} voices found`)
+  } else if (sorted.length > availableVoices.value.length) {
+    // 如果語音數量有增加，也更新
+    availableVoices.value = sorted
+    if (!selectedVoiceName.value) {
+      selectedVoiceName.value = sorted[0].name
+    }
+    console.log(`Voices updated: ${sorted.length} voices found`)
   }
+
 }
 
 // 朗讀下一個句子
@@ -328,23 +338,22 @@ onMounted(() => {
   // 首先嘗試初始化語音
   initializeVoices()
 
-  // 監聽語音變化事件
+  // 監聽語音變化事件 - 這是最重要的
   synth.value.onvoiceschanged = () => {
+    console.log('Voices changed event fired')
     initializeVoices()
   }
 
-  // 如果語音列表為空，嘗試延遲初始化
-  if (availableVoices.value.length === 0) {
+  // 多次延遲初始化以確保在各種瀏覽器上都能工作
+  const retryTimes = [100, 200, 500, 1000, 2000]
+  retryTimes.forEach(time => {
     setTimeout(() => {
-      initializeVoices()
-    }, 100)
-  }
-
-  // 再次延遲初始化以確保語音已加載
-  setTimeout(() => {
-    if (availableVoices.value.length === 0) {
-      initializeVoices()
-    }
-  }, 500)
+      if (availableVoices.value.length === 0) {
+        console.log(`Retrying voice initialization at ${time}ms`)
+        initializeVoices()
+      }
+    }, time)
+  })
 })
+
 </script>
