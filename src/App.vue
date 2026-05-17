@@ -121,7 +121,7 @@
       </div>
     </div>
 
-    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.01</div>
+    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.02</div>
   </div>
 </template>
 
