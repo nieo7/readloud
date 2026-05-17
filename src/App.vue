@@ -121,7 +121,7 @@
       </div>
     </div>
 
-    <div class="footer">使用 Web Speech API 提供的語音合成功能</div>
+    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.01</div>
   </div>
 </template>
 
@@ -162,7 +162,7 @@ watch(text, (newText) => {
 const getVoiceDisplayName = (voice: SpeechSynthesisVoice): string => {
   const name = voice.name || 'Unknown'
   const lang = voice.lang || ''
-  
+
   // 判斷性別
   let gender = ''
   if (name.toLowerCase().includes('male')) {
@@ -170,7 +170,7 @@ const getVoiceDisplayName = (voice: SpeechSynthesisVoice): string => {
   } else if (name.toLowerCase().includes('female')) {
     gender = '(女聲)'
   }
-  
+
   // 判斷地區
   let region = ''
   if (lang.includes('en-US')) {
@@ -178,12 +178,12 @@ const getVoiceDisplayName = (voice: SpeechSynthesisVoice): string => {
   } else if (lang.includes('en-GB')) {
     region = '英式'
   }
-  
+
   // 組合顯示名稱
   const parts = [name]
   if (gender) parts.push(gender)
   if (region) parts.push(region)
-  
+
   return parts.join(' ')
 }
 
@@ -191,7 +191,7 @@ const getVoiceDisplayName = (voice: SpeechSynthesisVoice): string => {
 const initializeVoices = () => {
   const voices = synth.value.getVoices()
   const englishVoices = voices.filter(v => v.lang.startsWith('en-'))
-  
+
   // 排序優先級：US 女聲 > US 男聲 > UK 女聲 > UK 男聲 > 其他
   const sorted = englishVoices.sort((a, b) => {
     const aIsUS = a.lang === 'en-US' || a.lang.startsWith('en-US')
@@ -200,21 +200,21 @@ const initializeVoices = () => {
     const bIsFemale = b.name.toLowerCase().includes('female')
     const aIsMale = a.name.toLowerCase().includes('male')
     const bIsMale = b.name.toLowerCase().includes('male')
-    
+
     // 優先級 1: US 語音 vs 非 US 語音
     if (aIsUS && !bIsUS) return -1
     if (!aIsUS && bIsUS) return 1
-    
+
     // 優先級 2: 女聲 vs 男聲（在同一地區內）
     if (aIsFemale && !bIsFemale) return -1
     if (!aIsFemale && bIsFemale) return 1
-    
+
     // 優先級 3: 男聲排序（按名稱）
     if (aIsMale && bIsMale) return a.name.localeCompare(b.name)
-    
+
     return 0
   })
-  
+
   availableVoices.value = sorted
   if (sorted.length > 0) {
     selectedVoiceName.value = sorted[0].name
@@ -224,7 +224,7 @@ const initializeVoices = () => {
 // 朗讀下一個句子
 const speakNextSentence = (startIndex: number) => {
   if (!isPlayingRef.value) return
-  
+
   if (startIndex >= sentences.value.length) {
     isPlaying.value = false
     isPlayingRef.value = false
@@ -290,11 +290,11 @@ const handleSpeak = () => {
     isPlaying.value = true
     isPlayingRef.value = true
     currentSentenceIndex.value = 0
-    
+
     if (textContainerRef.value) {
       textContainerRef.value.scrollTop = 0
     }
-    
+
     speakNextSentence(0)
   }
 }
