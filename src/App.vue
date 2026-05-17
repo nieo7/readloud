@@ -121,7 +121,7 @@
       </div>
     </div>
 
-    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.02</div>
+    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.03</div>
   </div>
 </template>
 
@@ -325,7 +325,26 @@ const handleClear = () => {
 
 // 初始化
 onMounted(() => {
+  // 首先嘗試初始化語音
   initializeVoices()
-  synth.value.onvoiceschanged = initializeVoices
+
+  // 監聽語音變化事件
+  synth.value.onvoiceschanged = () => {
+    initializeVoices()
+  }
+
+  // 如果語音列表為空，嘗試延遲初始化
+  if (availableVoices.value.length === 0) {
+    setTimeout(() => {
+      initializeVoices()
+    }, 100)
+  }
+
+  // 再次延遲初始化以確保語音已加載
+  setTimeout(() => {
+    if (availableVoices.value.length === 0) {
+      initializeVoices()
+    }
+  }, 500)
 })
 </script>
