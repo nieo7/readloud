@@ -121,7 +121,7 @@
       </div>
     </div>
 
-    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.04</div>
+    <div class="footer">使用 Web Speech API 提供的語音合成功能 v.b605.05</div>
   </div>
 </template>
 
@@ -215,20 +215,15 @@ const initializeVoices = () => {
     return 0
   })
 
-  // 只當語音有更新時才更新
-  if (sorted.length > 0 && availableVoices.value.length === 0) {
+  // 強制更新語音列表
+  if (sorted.length > 0) {
     availableVoices.value = sorted
-    selectedVoiceName.value = sorted[0].name
-    console.log(`Voices initialized: ${sorted.length} voices found`)
-  } else if (sorted.length > availableVoices.value.length) {
-    // 如果語音數量有增加，也更新
-    availableVoices.value = sorted
-    if (!selectedVoiceName.value) {
+    // 如果沒有選擇語音或選擇的語音不存在，使用第一個
+    if (!selectedVoiceName.value || !sorted.find(v => v.name === selectedVoiceName.value)) {
       selectedVoiceName.value = sorted[0].name
     }
     console.log(`Voices updated: ${sorted.length} voices found`)
   }
-
 }
 
 // 朗讀下一個句子
@@ -355,5 +350,4 @@ onMounted(() => {
     }, time)
   })
 })
-
 </script>
